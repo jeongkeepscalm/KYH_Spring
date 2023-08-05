@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>컨텐츠에 데이터 출력하기</h1>
+<!--
+    문자 출력
+    1.
+        th:text="${data}"
+        [[${data}]]
+
+    2.
+        model.addAttribute("data", "<b>Hello Spring!</b>");
+        모델에 담아온 < 를 문자열로 표현 하려면 (언이스케이프 Unescape)
+        th:utext=""
+        [(...)]
+-->
+<ul>
+    <li>th:text 사용 <sapn th:utext="${data}" ></sapn></li>
+    <li>컨텐츠 안에서 직접 출력하기 = [(${data})]</li>
+</ul>
+
+<h1><span th:inline="none">[[...]] vs [(...)]</span></h1>
+<ul>
+    <li><span th:inline="none">[[...]] = </span>[[${data}]]</li>
+    <li><span th:inline="none">[(...)] = </span>[(${data})]</li>
+</ul>
+
+</body>
+</html>

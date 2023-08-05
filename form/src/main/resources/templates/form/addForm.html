@@ -1,0 +1,170 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+    </style>
+</head>
+<body>
+<!--
+    th:object="${...}" 로 넘어온 객체를 사용
+    th:field="*{...}" 에 해당 객체의 필드값을 넣어줌으로쎠 name, id, value 자동 지정.
+    name, id, value 속성을 제거해도 th:field 가 자동생성.
+-->
+<div class="container">
+
+    <div class="py-5 text-center">
+        <h2>상품 등록 폼</h2>
+    </div>
+
+    <form action="item.html" th:action th:object="${item}" method="post">
+        <div>
+            <label for="itemName">상품명</label>
+            <input type="text" id="itemName" th:field="*{itemName}" class="form-control" placeholder="이름을 입력하세요">
+        </div>
+        <div>
+            <label for="price">가격</label>
+            <input type="text" id="price" th:field="*{price}" class="form-control" placeholder="가격을 입력하세요">
+        </div>
+        <div>
+            <label for="quantity">수량</label>
+            <input type="text" id="quantity" th:field="*{quantity}" class="form-control" placeholder="수량을 입력하세요">
+        </div>
+
+        <hr class="my-4">
+        <!-- single checkbox -->
+       <!-- <div>판매 여부</div>
+        <div>
+            <div class="form-check">
+                <input type="checkbox" id="open" name="open" class="form-check-input">
+                &lt;!&ndash;
+                체크 해제를 인식하기 위한 히든 필드
+                히든 필드는 항상 전송되며 체크박스에 체크가 되었다면 open, _open 이 전송되고 _open은 무시
+                그렇지 않다면 _open만 전송되어서 스프링이 체크박스가 해제되었다고 판단.
+                &ndash;&gt;
+                <input type="hidden" name="_open" value="on"/>
+                <label for="open" class="form-check-label">판매 오픈</label>
+            </div>
+        </div>-->
+
+        <!-- single checkbox -->
+        <div>판매 여부</div>
+        <div>
+            <div class="form-check">
+                <!-- 타임리프 필드를 사용하면 히든필드부분도 자동으로 생성. -->
+                <input type="checkbox" id="open" th:field="*{open}" class="form-checkinput">
+                <label for="open" class="form-check-label">판매 오픈</label>
+            </div>
+        </div>
+
+        <!-- multi checkbox -->
+        <div>
+            <div>등록 지역</div>
+            <div th:each="region : ${regions}" class="form-check form-check-inline">
+                <input type="checkbox" th:field="*{regions}" th:value="${region.key}"
+                       class="form-check-input">
+                <label th:for="${#ids.prev('regions')}"
+                       th:text="${region.value}" class="form-check-label">서울</label>
+                <!--
+                    name 은 중복이 가능하나 id는 중복불가이기 때문에
+                    id : regions1, regions2, regions3 이렇게 숫자를 붙여 자동으로 생성.
+
+                    ids.prev(...), ids.next(...) 를 제공해서 동적으로 생성되는 id 값을 사용 가능.
+                -->
+            </div>
+        </div>
+
+        <!--
+            radio button
+
+            체크 박스는 수정시 히든필드로 값이 아무것도 넘어가지 않는 것을 해결.
+            라디오버튼은 이미 선택되어 있다면, 수정시에도 항상 하나를 선택하도록 되어있으므로 히든 필드 사용할 필요 x.
+        -->
+        <div>
+            <div>상품 종류</div>
+            <div th:each="type : ${itemTypes}" class="form-check form-check-inline">
+                <input type="radio" th:field="*{itemType}" th:value="${type.name()}"
+                       class="form-check-input">
+                <label th:for="${#ids.prev('itemType')}" th:text="${type.description}"
+                       class="form-check-label">
+                    BOOK
+                </label>
+            </div>
+        </div>
+
+        <!-- SELECT -->
+        <div>
+        <div>배송 방식</div>
+        <select th:field="*{deliveryCode}" class="form-select">
+            <option value="">==배송 방식 선택==</option>
+            <option th:each="deliveryCode : ${deliveryCodes}" th:value="${deliveryCode.code}"
+                    th:text="${deliveryCode.displayName}">FAST</option>
+        </select>
+    </div>
+        <hr class="my-4">
+
+
+
+        <!-- Practice -->
+        <div>Practice 1</div>
+        <div>
+            <div class="form-check">
+                <input type="checkbox" th:field="*{trueFalse}">
+                <label th:for="${#ids.prev('trueFalse')}">checkbox test</label>
+            </div>
+        </div>
+
+        <div>Practice 2</div>
+        <div>
+            <div class="form-check">
+                <div th:each="map : ${testMap}"> <!-- @ModelAttribute -->
+                    <input type="checkbox" th:field="*{testMap}" th:value="${map.key}">
+                    <label th:for="${#ids.prev('testMap')}" th:text="${map.value}"></label>
+                </div>
+            </div>
+        </div>
+
+        <div>Practice 3</div>
+        <div>
+            <div class="form-check">
+                <div th:each=" te : ${testEnum}">
+                    <input type="checkbox" th:field="*{testEnum}" th:value="${te.name()}">
+                    <label th:for="${#ids.prev('testEnum')}" th:text="${te.getStr()}"></label>
+                </div>
+            </div>
+        </div>
+
+
+        <div>Practice 4</div>
+        <div>
+            <div class="form-check">
+                <select th:field="*{testObject}">
+                    <option value="">testSelectBox</option>
+                    <option th:each=" to : ${testObject}" th:value="${to.getCode()}" th:text="${to.getCodeName()}"></option>
+                </select>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col">
+                <button class="w-100 btn btn-primary btn-lg" type="submit">상품 등록</button>
+            </div>
+            <div class="col">
+                <button class="w-100 btn btn-secondary btn-lg"
+                        onclick="location.href='items.html'"
+                        th:onclick="|location.href='@{/form/items}'|"
+                        type="button">취소</button>
+            </div>
+        </div>
+
+    </form>
+
+</div> <!-- /container -->
+</body>
+</html>
